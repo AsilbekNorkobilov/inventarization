@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add product</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="col-4 offset-4">
+    <div class="card m-2">
+        <form action="/product/add" method="post" enctype="multipart/form-data">
+            <div class="card-header bg-dark text-white">Add product</div>
+            <div class="card-body">
+                <input class="form-control m-2" type="file" name="photo" required="required">
+                <select class="form-control m-2" name="categoryId" required="required">
+                    <option disabled selected value="">Choose category</option>
+                    <th:block th:each="category:${categories}">
+                        <option th:value="${category.id}" th:text="${category.name}"></option>
+                    </th:block>>
+                </select>
+                <input class="form-control m-2" name="name" type="text" placeholder="Product name" required="required">
+                <input class="form-control m-2" type="number" name="price" placeholder="Price" required="required">
+            </div>
+            <div class="card-footer">
+                <button class="btn btn-dark">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="bg-dark row">
+    <div class="col-6 m-2 text-white">
+        <h1>Sale Page</h1>
+    </div>
+    <div class="col-5 m-3">
+        <a class="btn btn-danger" href="/logout">LogOut</a>
+        <a class="btn btn-secondary" href="/report">Report</a>
+        <a class="btn btn-warning" href="/category/add" sec:authorize="hasRole('ROLE_ADMIN')">Add Category</a>
+        <a class="btn btn-info" href="/product/add" sec:authorize="hasRole('ROLE_ADMIN')">Add product</a>
+        <a class="btn btn-success" href="/manager/add" sec:authorize="hasRole('ROLE_ADMIN')">Add manager</a>
+        <a class="btn btn-success" href="/" >Home</a>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-3">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-dark text-white">Categories</div>
+                <div class="card-body">
+                    <form action="/sale" class="form-inline my-2 my-lg-0">
+                        <div class="input-group">
+                            <input name="categoryName" th:value="${categoryName!=null?categoryName:''}" class="form-control" type="search" placeholder="Search" aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-success" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                    <ul class="list-group">
+                        <a class="btn btn-light" th:each="category:${categories}" th:href="'/sale?categoryId='+${category.id}"
+                           th:classappend="${category.id.equals(categoryId)?'bg-dark':''}">
+                            <li class="text-center list-group-item" th:text="${category.name}"></li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-3" th:if="${categoryId!=null}">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-dark text-white">Products</div>
+                <div class="card-body">
+                    <form action="/sale" class="form-inline my-2 my-lg-0">
+                        <div class="input-group">
+                            <input type="hidden" name="categoryId" th:value="${categoryId}">
+                            <input name="productName" th:value="${productName!=null?productName:''}" class="form-control" type="search" placeholder="Search" aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-success" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                    <ul class="list-group">
+                        <a class="btn btn-light" th:each="product:${products}" th:href="'/sale?productId='+${product.id}+'&categoryId='+${categoryId}"
+                           th:classappend="${product.id.equals(productId)?'bg-dark':''}">
+                            <li class="text-center list-group-item" th:text="${product.name}"></li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6" th:if="${productId!=null}">
+        <div class="container">
+            <div class="row">
+                <div class="card">
+                        <div class="card-header"> Basket </div>
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th>Amount</th>
+                                    <th>Delete</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="product:${basketProducts}">
+                                    <td th:text="${product.product.name}"></td>
+                                    <td th:text="${product.product.price}"></td>
+                                    <td th:text="${product.amount}"></td>
+                                    <td>
+                                        <form action="/basket/delete">
+                                            <input type="hidden" name="categoryId" th:value="${categoryId}">
+                                            <input type="hidden" name="productId" th:value="${product.product.id}">
+                                            <button class="btn btn-danger">Delete</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="card-footer">
+                            <div class="row">
+                                <form action="/basket/makeOrder" method="post" th:if="${!basketProducts.isEmpty()}">
+                                    <div class="d-flex">
+                                        <h5 th:text="'OverAll: '+${sum}+' sum'"></h5>
+                                        <button href="" class="btn btn-dark m-2 text-white">Make order</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-5">
+                                    <img width="150" th:src="'/file/photo?productId='+${productId}" alt="">
+                                </div>
+                                <div class="col-7">
+                                    <h1 th:text="${currentProduct.name}"></h1>
+                                    <h1 th:text="${currentProduct.price}+' sum'"></h1>
+                                </div>
+                            </div>
+                            <div class="row m-2">
+                                <button class="btn btn-secondary" th:if="${count==0}">-</button>
+                                <form th:if="${count>0}" action="/basket/count" method="post">
+                                    <input type="hidden" name="action" value="minus">
+                                    <input type="hidden" name="productId" th:value="${productId}">
+                                    <input type="hidden" name="categoryId" th:value="${categoryId}">
+                                    <input type="hidden" name="count" th:value="${count}">
+                                    <button class="btn btn-dark">-</button>
+                                </form>
+                                <h1 th:text="${count}"></h1>
+                                <button class="btn btn-secondary" th:if="${count==productCount}">+</button>
+                                <form th:if="${count<productCount}" action="/basket/count" method="post">
+                                    <input type="hidden" name="action" value="plus">
+                                    <input type="hidden" name="productId" th:value="${productId}">
+                                    <input type="hidden" name="categoryId" th:value="${categoryId}">
+                                    <input type="hidden" name="count" th:value="${count}">
+                                    <button class="btn btn-dark">+</button>
+                                </form>
+                            </div>
+                            <div class="row">
+                                <div th:if="${count==0}">
+                                    <button class="btn btn-secondary">Add to basket</button>
+                                </div>
+                                <form th:if="${count!=0}" action="/basket/add" method="post">
+                                    <input type="hidden" name="productId" th:value="${productId}">
+                                    <input type="hidden" name="categoryId" th:value="${categoryId}">
+                                    <input type="hidden" name="count" th:value="${count}">
+                                    <button class="btn btn-dark">Add to basket</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Incomes</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body>
+<div class="bg-dark row">
+    <div class="col-6 m-2 text-white">
+        <h1>Home Page</h1>
+    </div>
+    <div class="col-5 m-3">
+        <a class="btn btn-danger" href="/logout">LogOut</a>
+        <a class="btn btn-secondary" href="/report">Report</a>
+        <a class="btn btn-warning" href="/category/add" sec:authorize="hasRole('ROLE_ADMIN')">Add Category</a>
+        <a class="btn btn-info" href="/product/add" sec:authorize="hasRole('ROLE_ADMIN')">Add product</a>
+        <a class="btn btn-success" href="/manager/add" sec:authorize="hasRole('ROLE_ADMIN')">Add manager</a>
+        <a class="btn btn-success" href="/sale" sec:authorize="hasRole('ROLE_MANAGER')" >Make sale</a>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-3">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-dark text-white">Categories</div>
+                <div class="card-body">
+                    <form action="/" class="form-inline my-2 my-lg-0">
+                        <div class="input-group">
+                            <input name="categoryName" class="form-control" type="search" placeholder="Search" aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-success" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                    <ul class="list-group">
+                        <a class="btn btn-light" th:each="category:${categories}" th:href="'/?categoryId='+${category.id}"
+                           th:classappend="${category.id.equals(categoryId)?'bg-dark':''}">
+                            <li class="text-center list-group-item" th:text="${category.name}"></li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-3" th:if="${categoryId!=null}">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-dark text-white">Products</div>
+                <div class="card-body">
+                    <form action="/" class="form-inline my-2 my-lg-0">
+                        <div class="input-group">
+                            <input type="hidden" name="categoryId" th:value="${categoryId}">
+                            <input name="productName" class="form-control" type="search" placeholder="Search" aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-success" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                    <ul class="list-group">
+                        <a class="btn btn-light" th:each="product:${products}" th:href="'/?productId='+${product.id}+'&categoryId='+${categoryId}"
+                           th:classappend="${product.id.equals(productId)?'bg-dark':''}">
+                            <li class="text-center list-group-item" th:text="${product.name}"></li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6" th:if="${productId!=null}">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <div class="container">
+                        <div class="d-flex">
+                            <form action="/" class="w-100">
+                                <input type="hidden" name="productId" th:value="${productId}">
+                                <input type="hidden" name="categoryId" th:value="${categoryId}">
+                                <button class="btn btn-dark w-100">Info</button>
+                            </form>
+                            <form action="/sales" class="w-100">
+                                <input type="hidden" name="productId" th:value="${productId}">
+                                <input type="hidden" name="categoryId" th:value="${categoryId}">
+                                <button class="btn btn-dark w-100">Sales</button>
+                            </form>
+                            <button class="btn btn-primary w-100" href="">Incomes</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="col-3 offset-9 my-2">
+                        <form action="/product/income">
+                            <input type="hidden" name="productId" th:value="${productId}">
+                            <button class="btn btn-dark">Make income</button>
+                        </form>
+                    </div>
+                    <div>
+                        <table class="table table-striped">
+                            <thead class="table-dark">
+                            <tr>
+                                <th>Data</th>
+                                <th>Amount</th>
+                                <th>Price</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="income:${incomes}">
+                                <td th:text="${#temporals.format(income.createdAt,'dd/MM/yyyy')}"></td>
+                                <td th:text="${income.amount}"></td>
+                                <td th:text="${income.price}"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

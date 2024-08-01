@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Income</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="row mt-2">
+    <div class="col-4 offset-4">
+        <div class="card">
+            <div class="card">
+                <form action="/product/income" method="post">
+                    <div class="card-header">Make income</div>
+                    <div class="card-body">
+                        <div class="row m-2">
+                            <div class="col-5">
+                                <img width="150" th:src="'/file/photo?productId='+${product.id}" alt="">
+                            </div>
+                            <div class="col-7">
+                                <h1 th:text="${product.name}"></h1>
+                                <h5 th:text="'Retail price:'+${product.price}"></h5>
+                            </div>
+                        </div>
+                        <input type="hidden" name="productId" th:value="${product.id}">
+                        <input class="form-control m-2" name="amount" type="number" placeholder="Amount" required="required">
+                        <input class="form-control m-2" name="price" type="number" placeholder="Income price" required="required">
+                        <div class="card-footer text-right">
+                            <button class="btn btn-dark m-2">Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

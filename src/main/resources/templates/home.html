@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>HomePage</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="bg-dark row">
+    <div class="col-6 m-2 text-white">
+        <h1>Home Page</h1>
+    </div>
+    <div class="col-5 m-3">
+        <a class="btn btn-danger" href="/logout">LogOut</a>
+        <a class="btn btn-secondary" href="/report">Report</a>
+        <a class="btn btn-warning" href="/category/add" sec:authorize="hasRole('ROLE_ADMIN')">Add Category</a>
+        <a class="btn btn-info" href="/product/add" sec:authorize="hasRole('ROLE_ADMIN')">Add product</a>
+        <a class="btn btn-success" href="/manager/add" sec:authorize="hasRole('ROLE_ADMIN')">Add manager</a>
+        <a class="btn btn-success" href="/sale" sec:authorize="hasRole('ROLE_MANAGER')" >Make sale</a>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-3">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-dark text-white">Categories</div>
+                <div class="card-body">
+                    <form action="/" class="form-inline my-2 my-lg-0">
+                        <div class="input-group">
+                            <input name="categoryName" th:value="${categoryName!=null?categoryName:''}" class="form-control" type="search" placeholder="Search" aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-success" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                        <ul class="list-group">
+                            <a class="btn btn-light" th:each="category:${categories}" th:href="'/?categoryId='+${category.id}"
+                               th:classappend="${category.id.equals(categoryId)?'bg-dark':''}">
+                                <li class="text-center list-group-item" th:text="${category.name}"></li>
+                            </a>
+                        </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-3" th:if="${categoryId!=null}">
+        <div class="container">
+            <div class="card">
+                <div class="card-header bg-dark text-white">Products</div>
+                <div class="card-body">
+                    <form action="/" class="form-inline my-2 my-lg-0">
+                        <div class="input-group">
+                            <input type="hidden" name="categoryId" th:value="${categoryId}">
+                            <input name="productName" th:value="${productName!=null?productName:''}" class="form-control" type="search" placeholder="Search" aria-label="Search">
+                            <div class="input-group-append">
+                                <button class="btn btn-outline-success" type="submit">Search</button>
+                            </div>
+                        </div>
+                    </form>
+                    <ul class="list-group">
+                        <a class="btn btn-light" th:each="product:${products}" th:href="'/?productId='+${product.id}+'&categoryId='+${categoryId}"
+                           th:classappend="${product.id.equals(productId)?'bg-dark':''}">
+                            <li class="text-center list-group-item" th:text="${product.name}"></li>
+                        </a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-6" th:if="${productId!=null}">
+        <div class="container">
+            <div class="card">
+                <div class="card-header">
+                    <div class="container">
+                        <div class="d-flex">
+                            <button class="btn btn-primary w-100" href="">Info</button>
+                            <form action="/sales" class="w-100">
+                                <input type="hidden" name="productId" th:value="${productId}">
+                                <input type="hidden" name="categoryId" th:value="${categoryId}">
+                                <button class="btn btn-dark w-100">Sales</button>
+                            </form>
+                            <form action="/incomes" class="w-100">
+                                <input type="hidden" name="productId" th:value="${productId}">
+                                <input type="hidden" name="categoryId" th:value="${categoryId}">
+                                <button class="btn btn-dark w-100">Incomes</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="container" sec:authorize="hasRole('ROLE_MANAGER')">
+                        <div class="row">
+                            <div class="col-4">
+                                <img width="150" th:src="'/file/photo?productId='+${productId}" alt="">
+                            </div>
+                            <div class="col-8">
+                                <h1 th:text="${currentProduct.name}"></h1>
+                                <h1 th:text="${currentProduct.price}+' sum'"></h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="container" sec:authorize="hasRole('ROLE_ADMIN')">
+                        <div class="row">
+                            <form action="/product/edit" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="productId" th:value="${productId}">
+                                <div class="row">
+                                    <div class="col-5">
+                                        <input name="photo" type="file" class="d-none" id="fileInput" accept="image/*">
+                                        <label for="fileInput">
+                                            <img width="400" th:src="'/file/photo?productId='+${productId}" class="img-fluid" id="currentImage" alt="Current Image">
+                                        </label>
+                                    </div>
+                                    <div class="col-7">
+                                        <input class="form-control my-2 w-50" type="text" th:value="${currentProduct.name}" name="name">
+                                        <input class="form-control w-50" type="number" th:value="${currentProduct.price}" name="price">
+                                    </div>
+                                </div>
+                                <button class="btn btn-dark">Save</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

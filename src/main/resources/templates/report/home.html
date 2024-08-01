@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Report</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="bg-dark row">
+    <div class="col-6 m-2 text-white">
+        <h1>Sale Page</h1>
+    </div>
+    <div class="col-5 m-3">
+        <a class="btn btn-danger" href="/logout">LogOut</a>
+        <a class="btn btn-warning" href="/category/add" sec:authorize="hasRole('ROLE_ADMIN')">Add Category</a>
+        <a class="btn btn-info" href="/product/add" sec:authorize="hasRole('ROLE_ADMIN')">Add product</a>
+        <a class="btn btn-success" href="/manager/add" sec:authorize="hasRole('ROLE_ADMIN')">Add manager</a>
+        <a class="btn btn-success" href="/sale" sec:authorize="hasRole('ROLE_MANAGER')" >Make sale</a>
+        <a class="btn btn-success" href="/" >Home</a>
+    </div>
+</div>
+
+<div class="container my-2">
+    <div class="d-flex">
+        <form action="/report/sales" class="w-100">
+            <button class="btn btn-dark w-100">Sales report</button>
+        </form>
+        <form action="/report/balance" class="w-100">
+            <button class="btn btn-dark w-100">Balance report</button>
+        </form>
+        <form action="/report/profit" class="w-100">
+            <button class="btn btn-dark w-100">Profit</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
